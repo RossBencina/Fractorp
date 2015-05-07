@@ -1,2 +1,2 @@
 # Fractorp
-Nanoscopic C++ Actor, stackless coroutine, and CSP framework
+Nanoscopic C++ Actors, state machines, stackless coroutines, and CSP primitives
