@@ -1,0 +1,14 @@
+; install the following VS extension for this to work in MSVS
+; https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328
+
+; Top-most EditorConfig file
+root = true
+
+; Windows-style newlines
+[*]
+end_of_line = CRLF
+
+; 2-column space indentation
+[*.{c,cpp,h,hpp}]
+indent_style = space
+indent_size = 4
