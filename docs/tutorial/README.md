@@ -1,4 +1,4 @@
-This folder contains an envolving tutorial about techniques for
+This folder contains an evolving tutorial about techniques for
 implementing "micro-actors" in C++. (Most of the techniques apply
 to other languages too.)
 
