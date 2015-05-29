@@ -7,8 +7,6 @@
 #ifndef INCLUDED_FRACTORP_ACTOR_H
 #define INCLUDED_FRACTORP_ACTOR_H
 
-
-#if 1
 #include <cassert>
 #include <cstdint>
 #include <list>
@@ -382,7 +380,5 @@ struct ActorSpace {
 };
 
 } // end namespace Fractorp
-
-#endif
 
 #endif /* INCLUDED_FRACTORP_ACTOR_H */
