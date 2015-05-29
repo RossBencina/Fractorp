@@ -28,9 +28,41 @@ else:
     # debugging:
     sourceFileName = "01-boxed-function-pointer.cpp"
 
+
+# ## queries and operation on lines of text ##
+
+# A "blank line" is a line that is empty after stripping
+# its start and end of all whitespace.
+
+def isBlank(s):
+   return (len(s.strip()) == 0)
+
+# `textPrefix` is the text that starts each source line that
+# should become plain text in the markdown output.
 textPrefix = "/// "
 
-sourceLines = open(sourceFileName, "rt").read().splitlines()
+def isText(s):
+   return s.startswith(textPrefix)
+
+def stripTextPrefix(x):
+    return s[len(textPrefix):]
+
+# lines that don't become plain text in the markdown output
+# are quoted as source code.
+def isCode(s):
+    return not isText(s)
+
+# strip blank lines from the beginning and end of a block
+# destructively modifies array xs
+def stripBlankLines(xs):
+    while xs and isBlank(xs[0]): # first
+        xs.pop(0)
+    while xs and isBlank(xs[-1]): # last
+        xs.pop(-1)
+    return xs
+
+
+# ## Split program output into outputBlocks dict. ##
 
 outputFileName = sourceFileName + ".md"
 outputFile = open(outputFileName, "wt")
@@ -43,24 +75,28 @@ os.system("a.exe > a.output.txt");
 
 programOutputLines = open("a.output.txt", "rt").read().splitlines()
 
-# break the program output into a series of blocks, each keyed by the
-# @OUTPUT directive up to : or EOL
+# break the program output into a series of blocks, each delimited by a
+# `# [SECTION_NAME] #` line (or EOL)
 #print programOutputLines
 outputBlocks = {}
 blockKey = ""
 blockLines = []
 for s in programOutputLines:
-    if s.startswith("@OUTPUT"):
+    stripped_s = s.strip()
+    if stripped_s.startswith("# [") and stripped_s.endswith("] #"):
         if blockKey: # flush previous block
-            outputBlocks[blockKey] = blockLines
-            blockLines = []
-        blockKey = s.split(":")[0] # start new block
-    blockLines.append(s)
+            outputBlocks[blockKey] = stripBlankLines(blockLines)
+
+        blockKey = s[1:-1].strip() # start new block
+        blockLines = []
+    else:
+        blockLines.append(s)
 if blockKey:
-    outputBlocks[blockKey] = blockLines
+    outputBlocks[blockKey] = stripBlankLines(blockLines)
 
 #print outputBlocks
 
+# ## Process source text ##
 
 # Turn the text "inside out" as follows:
 # - Lines beginning with "/// " (a.k.a. textPrefix)
@@ -74,20 +110,8 @@ if blockKey:
 #         an output block key are replaced with the
 #         corresponding output block.
 #         
-# A "blank line" is a line that is empty after stripping
-# its start and end of all whitespace.
 
-def isBlank(s):
-   return (len(s.strip()) == 0)
-
-def isText(s):
-   return s.startswith(textPrefix)
-
-def isCode(s):
-    return not isText(s)
-
-def stripPrefix(x):
-    return s[len(textPrefix):]
+sourceLines = open(sourceFileName, "rt").read().splitlines()
 
 src = sourceLines # use shorter name to save keystrokes
 
@@ -111,6 +135,9 @@ previousLineWasText = True # backward
 for i in range(N-1,-1,-1):
     prevLineWasText = extendText(i, prevLineWasText)
 
+# ## output the text ##
+# * merge outputBlocks
+# * qoute source code reions
 
 codeBegin = "```c++"
 codeEnd = "```"
@@ -122,7 +149,9 @@ def outputLine(s):
 def outputText(s):
     ss = s.strip()
     if ss in outputBlocks:
-        b = outputBlocks[ss]
+        blockKey = ss
+        b = outputBlocks[blockKey]
+        outputLine(">"+blockKey+":")
         outputLine("> ```")
         for x in b:
             outputLine("> "+x)
@@ -134,7 +163,7 @@ isOutputting = "text"
 for s in src:
     if isOutputting == "text":
         if isText(s):
-            outputText(stripPrefix(s))
+            outputText(stripTextPrefix(s))
         else:
             outputLine(codeBegin)
             outputLine(s)
@@ -144,7 +173,7 @@ for s in src:
             outputLine(s)
         else:
             outputLine(codeEnd)
-            outputText(stripPrefix(s))
+            outputText(stripTextPrefix(s))
             isOutputting = "text"
 if isOutputting == "code":
     outputLine(codeEnd)

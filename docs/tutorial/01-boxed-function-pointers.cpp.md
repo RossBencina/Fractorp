@@ -1,9 +1,10 @@
 ```c++
 #include <cstdio>
+#include "emdeer.h" // (used for C++ to markdown conversion)
 ```
 
-Boxed Function Pointers
-=======================
+1. Boxed Function Pointers
+==========================
 
 Our story begins with a "boxed" function pointer: a function pointer
 inside in a struct.
@@ -38,19 +39,18 @@ void hello(Box *)
 
 void example_1()
 {
-    std::printf("@OUTPUT-1:\n\n"); // (You can ignore these @OUTPUT lines. They serve 
-                                   // to delimit each example's output so that it can 
-                                   // be automatically inserted in to the markdown 
-                                   // rendering of this file.)
+    MD_BEGIN_OUTPUT("Output 1");    // (You can ignore these MD_BEGIN_OUTPUT lines.
+                                    // They serve to delimit each example's output so
+                                    // that it can be automatically inserted in to the
+                                    // markdown rendering of this file.
     Box a = {hello};
     a.bp(&a);
 }
 ```
 
 Which outputs:
+>[Output 1]:
 > ```
-> @OUTPUT-1:
-> 
 > hello world!
 > ```
 
@@ -67,7 +67,7 @@ void goodbye(Box *)
 
 void example_2()
 {
-    std::printf("@OUTPUT-2:\n\n");
+    MD_BEGIN_OUTPUT("Output 2");
 
     Box a = { hello };
     Box b = { hello };
@@ -79,16 +79,14 @@ void example_2()
 }
 ```
 
-Which outputs:
+>[Output 2]:
 > ```
-> @OUTPUT-2:
-> 
 > hello world!
 > hello world!
 > goodbye world!
 > ```
 
-Typing the box name twice for each `bp` call is error-prone. Let's define 
+Typing the box name twice for each `bp` call is error-prone. Let's define
 a function to invoke the box's proc:
 
 ```c++
@@ -99,7 +97,7 @@ void invoke(Box& a)
 
 void example_3()
 {
-    std::printf("@OUTPUT-3:\n\n");
+    MD_BEGIN_OUTPUT("Output 3");
 
     Box a = { hello };
     Box b = { goodbye };
@@ -109,9 +107,8 @@ void example_3()
 }
 ```
 
+>[Output 3]:
 > ```
-> @OUTPUT-3:
-> 
 > hello world!
 > goodbye world!
 > ```
@@ -143,7 +140,7 @@ void close(Box *a)
 
 void example_4()
 {
-    std::printf("@OUTPUT-4:\n\n");
+    MD_BEGIN_OUTPUT("Output 4");
 
     Box a = { open };
     for (int i=0; i < 6; ++i)
@@ -151,9 +148,8 @@ void example_4()
 }
 ```
 
+>[Output 4]:
 > ```
-> @OUTPUT-4:
-> 
 > opened
 > closed
 > opened
@@ -162,7 +158,7 @@ void example_4()
 > closed
 > ```
 
-That's it for now. Rest assured there is more to come :)
+That's it for the first episode. Next I'll begin to explore using boxed function pointers to implement _Actors_.
 
 ```c++
 int main(int, char *[])
@@ -174,4 +170,8 @@ int main(int, char *[])
 }
 ```
 
-Generated from [`01-boxed-function-pointer.cpp`](01-boxed-function-pointer.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-20 16:32:24.631000
+***
+Next: [Raw Actors](02-raw-actors.cpp.md) <br/>
+Up: [README](README.md)
+
+Generated from [`01-boxed-function-pointers.cpp`](01-boxed-function-pointers.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-29 16:23:22.245000

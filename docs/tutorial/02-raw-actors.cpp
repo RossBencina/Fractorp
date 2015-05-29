@@ -1,0 +1,291 @@
+#include <cstdio>
+#include "emdeer.h" // (used for C++ to markdown conversion)
+
+/// 2. Raw Actors
+/// =============
+
+/// [Part 1](01-boxed-function-pointers.cpp.md) introduced *boxed function
+/// pointers*. We'll continue to use boxed function pointers, but I'm going
+/// to rename things to be suggestive of the
+/// [_actor model_](http://en.wikipedia.org/wiki/Actor_model).
+
+/// Our protagonists are now `Actors`:
+
+struct Actor; // forward declaration
+
+/// `Actors` contain a function pointer named `BehaviorProc`:
+/// a procedure that determines how the actor behaves.
+
+typedef void (*BehaviorProc)(Actor *a);
+
+/// For example, here's a procedure for a non-acting actor:
+
+void do_nothing(Actor *)
+{
+}
+
+/// Here's the `Actor` type. It's a box containing a function pointer:
+
+struct Actor {
+    BehaviorProc bp_; // Underscore-suffix is a convention that I use
+                      // to denote local/encapsulated member data.
+
+/// We'll define a constructor to make setting the initial behavior easier:
+    Actor(BehaviorProc bp) : bp_(bp) {}
+
+/// And a default constructor (for non-acting actors):
+    Actor() : bp_(do_nothing) {}
+};
+
+/// `inject()` invokes an actor's behavior. I'll explain why it's called `inject` shortly.
+
+void inject(Actor& a) // invoke the actor's current behavior
+{
+    a.bp_(&a);
+}
+
+/// Let's try it out:
+
+void hello(Actor *)
+{
+    std::printf("hello world!\n");
+}
+
+void example_1()
+{
+    MD_BEGIN_OUTPUT("Output 1"); // mark output section for insertion into markdown
+
+    Actor inoperative;
+    inject(inoperative); // does nothing
+
+    Actor greeter(hello);
+    inject(greeter);
+}
+
+/// Which outputs:
+
+/// [Output 1]
+
+/// It works. Good.
+
+/// (`Actor` is now the central character in our story.
+/// Even so, keep in mind that we're still dealing with boxed function pointers.
+/// For now it should be self-evident; later we'll be layering up
+/// additional machinery.)
+
+/// Actors conform to three axioms:
+///
+///  1. Actors can specify the behavior that they will use at their next activation
+///  2. Actors can send messages to other actors
+///  3. Actors can create new actors
+
+/// Let's make an initial implementation of these axioms...
+
+
+/// ## Axiom 1: Actors can specify the behavior that they will use at their next activation ##
+
+/// `become()` specifies an actor's behavior. It sets the actor's behavior proc:
+
+void become(Actor *a, BehaviorProc bp)
+{
+    a->bp_ = bp;
+}
+
+/// We'll test `become()` by defining an actor that alternates between printing `yes` and `no`:
+
+void no(Actor *a);
+
+void yes(Actor *a)
+{
+    std::printf("yes\n");
+    become(a, no);
+}
+
+void no(Actor *a)
+{
+    std::printf("no\n");
+    become(a, yes);
+}
+
+void example_2()
+{
+    MD_BEGIN_OUTPUT("Output 2");
+
+    Actor indecisive(yes);
+    for(int i=0; i < 6; ++i)
+        inject(indecisive);
+}
+
+/// [Output 2]
+
+/// Looks good.
+
+/// (By the way, I'm intentionally writing in a C-like style to suppress irrelevant detail.
+/// I'll move towards idiomatic C++ in due course.)
+
+/// ## Axiom 2: Actors can send messages to other actors ##
+
+/// We haven't met _messages_ yet. I'll introduce them later.
+/// For now, "sending a message" is synonymous with invoking an actor's behavior.
+/// You can think of it as sending an empty message.
+/// We'll define a placeholder `send()` method:
+
+void send(Actor& a)
+{
+    a.bp_(&a);
+}
+
+/// You might have noticed that `send()` looks a lot like `inject()`.
+/// We'll adopt the convention that `send()` is only used within actor behaviors.
+/// i.e. for actors to send messages to each other. `inject()` will be used
+/// to _inject_  messages from outside the actor network. e.g. to invoke actors from
+/// top level functions. The distinction may seem unnecessary, but later
+/// we will need different code for each case.
+
+/// (Sidenote: I'm tempted to name `send` `sendto`. We'll see. In the meantime
+/// _one should not agonise over that which can easily be changed later._)
+
+
+/// Now the fun really begins. We can subclass `Actor` to introduce
+/// additional data members. We'll define an actor that alternately sends
+/// to one of two targets:
+
+struct AlternatingSender : public Actor {
+    Actor *target0_, *target1_;
+
+    AlternatingSender(Actor* a, Actor* b)
+        : Actor(sender_0)
+        , target0_(a)
+        , target1_(b)
+    {
+    }
+
+/// I've defined `AlternatingSender`'s behavior procs inside the struct:
+
+    static void sender_0(Actor *a)
+    {
+        send(*static_cast<AlternatingSender*>(a)->target0_); // downcast to concrete type
+        become(a, sender_1);
+    }
+
+    static void sender_1(Actor *a)
+    {
+        send(*static_cast<AlternatingSender*>(a)->target1_);
+        become(a, sender_0);
+    }
+/// (Without the `static` keyword they'd be member functions and couldn't
+/// be used as `BehaviorProcs`. I'd like them to be member functions.
+/// Those `static_cast` downcasts sure are ugly. I'll fix it next time.)
+};
+
+/// Now to test it:
+
+void example_3()
+{
+    MD_BEGIN_OUTPUT("Output 3");
+
+    Actor initiallyAffirmative(yes);
+    Actor initiallyNegative(no);
+    AlternatingSender alternately(&initiallyAffirmative, &initiallyNegative);
+
+    for(int i=0; i < 8; ++i)
+        inject(alternately);
+}
+
+/// [Output 3]
+
+/// Make sure that you understand the output.
+/// (Recall that the `yes` and `no` behaviors are set up to alternate.
+/// We are alternately invoking two actors each with alternating behaviors.)
+
+
+/// By the way, if you're getting uneasy about the weird static functions, `static_casts`,
+/// non-idiomatic C++ and so on, it's okay, you're not alone. I'm uneasy too.
+/// I'll work on that next time. Promise.
+
+/// ## Axiom 3: Actors can create new actors ##
+
+/// Something like the following should suffice to create new actors:
+
+/// > ```C++
+/// > Actor *a = new Actor;
+/// >```
+
+/// However, if we're going to support creating new actors we also need to provide a way to delete them.
+/// This raises a subtle point: our actors are polymorphic. Each subclass may need its own
+/// destructor (e.g. to clean up  local data, and to ensure that member objects have their
+/// destructors invoked). Typically this is what a virtual destructor is for, however I'm loath
+/// to introduce the space overhead of virtual functions just to deal with destruction.
+
+/// One way to handle polymorphic destruction is for actors to delete themselves:
+
+struct SelfDestructor : public Actor {
+    SelfDestructor()
+        : Actor(self_destruct)
+    {}
+
+    ~SelfDestructor()
+    {
+        std::printf("deleting.\n");
+    }
+
+    static void self_destruct(Actor *a)
+    {
+#if 1
+        // NB: downcast to ensure that the correct destructor is called.
+        // Without this cast only ~Actor is called.
+        // This is how we get polymorphic destruction without a virtual dtor.
+        delete static_cast<SelfDestructor*>(a);
+#else
+        delete a; // Set the #if above to 0 and check the output. It won't say "deleting."
+#endif
+    }
+};
+
+/// `SelfDestructor` deletes itself the first time it receives a message.
+/// This is not very useful, except to demonstrate creating new actors and
+/// immediately asking them to destroy themselves...
+
+struct Creator : public Actor {
+    Creator()
+        : Actor(receive)
+    {}
+
+    // I like `receive` as the behavior name for
+    // actors that never change their behavior.
+    static void receive(Actor *)
+    {
+        std::printf("creating.\n");
+        Actor *transient = new SelfDestructor;
+        send(*transient);
+    }
+};
+
+void example_4()
+{
+    MD_BEGIN_OUTPUT("Output 4");
+
+    Creator creator;
+
+    for(int i=0; i < 6; ++i)
+        inject(creator);
+}
+
+/// [Output 4]
+
+/// It proves the concept.
+
+/// That's it for today. Next time I'll C++-ify things a bit.
+
+int main(int, char *[])
+{
+    example_1();
+    example_2();
+    example_3();
+    example_4();
+}
+
+/// ***
+/// Next: _Coming soon..._ <br/>
+/// Previous: [Boxed Function Pointers](01-boxed-function-pointers.cpp.md) <br/>
+/// Up: [README](README.md)

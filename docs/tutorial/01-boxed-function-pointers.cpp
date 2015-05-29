@@ -1,7 +1,8 @@
 #include <cstdio>
+#include "emdeer.h" // (used for C++ to markdown conversion)
 
-/// Boxed Function Pointers
-/// =======================
+/// 1. Boxed Function Pointers
+/// ==========================
 
 /// Our story begins with a "boxed" function pointer: a function pointer
 /// inside in a struct.
@@ -29,16 +30,16 @@ void hello(Box *)
 
 void example_1()
 {
-    std::printf("@OUTPUT-1:\n\n"); // (You can ignore these @OUTPUT lines. They serve 
-                                   // to delimit each example's output so that it can 
-                                   // be automatically inserted in to the markdown 
-                                   // rendering of this file.)
+    MD_BEGIN_OUTPUT("Output 1");    // (You can ignore these MD_BEGIN_OUTPUT lines.
+                                    // They serve to delimit each example's output so
+                                    // that it can be automatically inserted in to the
+                                    // markdown rendering of this file.
     Box a = {hello};
     a.bp(&a);
 }
 
 /// Which outputs:
-/// @OUTPUT-1
+/// [Output 1]
 
 
 /// Each instance of `Box` can reference a different procedure.
@@ -52,7 +53,7 @@ void goodbye(Box *)
 
 void example_2()
 {
-    std::printf("@OUTPUT-2:\n\n");
+    MD_BEGIN_OUTPUT("Output 2");
 
     Box a = { hello };
     Box b = { hello };
@@ -63,10 +64,9 @@ void example_2()
     c.bp(&c);
 }
 
-/// Which outputs:
-/// @OUTPUT-2
+/// [Output 2]
 
-/// Typing the box name twice for each `bp` call is error-prone. Let's define 
+/// Typing the box name twice for each `bp` call is error-prone. Let's define
 /// a function to invoke the box's proc:
 
 void invoke(Box& a)
@@ -76,7 +76,7 @@ void invoke(Box& a)
 
 void example_3()
 {
-    std::printf("@OUTPUT-3:\n\n");
+    MD_BEGIN_OUTPUT("Output 3");
 
     Box a = { hello };
     Box b = { goodbye };
@@ -85,7 +85,7 @@ void example_3()
     invoke(b);
 }
 
-/// @OUTPUT-3
+/// [Output 3]
 
 /// We have created a form of "behavioral polymorphism," which is a fancy
 /// way to say that not all Boxes behave alike. So far we have `hello` boxes
@@ -113,16 +113,16 @@ void close(Box *a)
 
 void example_4()
 {
-    std::printf("@OUTPUT-4:\n\n");
+    MD_BEGIN_OUTPUT("Output 4");
 
     Box a = { open };
     for (int i=0; i < 6; ++i)
         invoke(a);
 }
 
-/// @OUTPUT-4
+/// [Output 4]
 
-/// That's it for now. Rest assured there is more to come :)
+/// That's it for the first episode. Next I'll begin to explore using boxed function pointers to implement _Actors_.
 
 int main(int, char *[])
 {
@@ -131,3 +131,7 @@ int main(int, char *[])
     example_3();
     example_4();
 }
+
+/// ***
+/// Next: [Raw Actors](02-raw-actors.cpp.md) <br/>
+/// Up: [README](README.md)
