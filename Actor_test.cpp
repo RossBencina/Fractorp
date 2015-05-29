@@ -217,6 +217,11 @@ typedef void* shared_context_type; // not used
 struct FactMessageType;
 typedef ActorSpace<shared_context_type, FactMessageType> AS2;
 
+// In the Actors book, messages are arbitrary tuples. Different
+// actors can then receive different messages (e.g. like different
+// functions have different signatures).
+// We only support a single message type for all actors, so we 
+// shoehorn the data into the following struct:
 struct FactMessageType{
     int i;
     AS2::actor_type *u;
@@ -266,6 +271,8 @@ struct PrintResult : public Fractorp::ActorT < AS2, PrintResult > {
 
 void test2()
 {
+    std::printf("running recursive factorial algorithm:");
+
     AS2::world_type world;
     RecFactorial recFactorial;
     PrintResult printResult;
