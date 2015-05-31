@@ -57,7 +57,7 @@ Which outputs:
 
 Each instance of `Box` can reference a different procedure.
 
-Let's define an second procedure:
+Let's define a second procedure:
 
 ```c++
 void goodbye(Box *)
@@ -174,4 +174,4 @@ int main(int, char *[])
 Next: [Raw Actors](02-raw-actors.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`01-boxed-function-pointers.cpp`](01-boxed-function-pointers.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-29 16:23:22.245000
+Generated from [`01-boxed-function-pointers.cpp`](01-boxed-function-pointers.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-31 07:55:13.383000
