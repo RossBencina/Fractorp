@@ -44,7 +44,7 @@ void example_1()
 
 /// Each instance of `Box` can reference a different procedure.
 
-/// Let's define an second procedure:
+/// Let's define a second procedure:
 
 void goodbye(Box *)
 {
