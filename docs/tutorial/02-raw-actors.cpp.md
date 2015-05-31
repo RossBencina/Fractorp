@@ -95,9 +95,7 @@ For now it should be self-evident; later we'll be layering up
 additional machinery.)
 
 Actors conform to three axioms:
-```c++
-///
-```
+
  1. Actors can specify the behavior that they will use at their next activation
  2. Actors can send messages to other actors
  3. Actors can create new actors
@@ -365,4 +363,4 @@ Next: _Coming soon..._ <br/>
 Previous: [Boxed Function Pointers](01-boxed-function-pointers.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-29 16:23:19.002000
+Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-31 07:07:14.192000

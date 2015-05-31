@@ -74,7 +74,7 @@ void example_1()
 /// additional machinery.)
 
 /// Actors conform to three axioms:
-///
+
 ///  1. Actors can specify the behavior that they will use at their next activation
 ///  2. Actors can send messages to other actors
 ///  3. Actors can create new actors
