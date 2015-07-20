@@ -1,14 +1,14 @@
 ```c++
 #include <cstdio>
-#include "emdeer.h" // (used for C++ to markdown conversion)
+#include "emdeer.h" // (C++ to markdown conversion utils)
 ```
 
 2. Raw Actors
 =============
 
 [Part 1](01-boxed-function-pointers.cpp.md) introduced *boxed function
-pointers*. We'll continue to use boxed function pointers, but I'm going
-to rename things to be suggestive of the
+pointers*. We'll continue to use boxed function pointers, but we'll
+rename things to be suggestive of the
 [_actor model_](http://en.wikipedia.org/wiki/Actor_model).
 
 Our protagonists are now `Actors`:
@@ -37,7 +37,7 @@ Here's the `Actor` type. It's a box containing a function pointer:
 ```c++
 struct Actor {
     BehaviorProc bp_; // Underscore-suffix is a convention that I use
-                      // to denote local/encapsulated member data.
+                      // to indicate local/encapsulated member data.
 ```
 
 We'll define a constructor to make setting the initial behavior easier:
@@ -94,7 +94,7 @@ Even so, keep in mind that we're still dealing with boxed function pointers.
 For now it should be self-evident; later we'll be layering up
 additional machinery.)
 
-Actors conform to three axioms:
+Actors conform to three "axioms":
 
  1. Actors can specify the behavior that they will use at their next activation
  2. Actors can send messages to other actors
@@ -105,7 +105,8 @@ Let's make an initial implementation of these axioms...
 
 ## Axiom 1: Actors can specify the behavior that they will use at their next activation ##
 
-`become()` specifies an actor's behavior. It sets the actor's behavior proc:
+Define a function `become()` to specify an actor's behavior.
+It sets the actor's behavior proc:
 
 ```c++
 void become(Actor *a, BehaviorProc bp)
@@ -158,7 +159,7 @@ I'll move towards idiomatic C++ in due course.)
 
 ## Axiom 2: Actors can send messages to other actors ##
 
-We haven't met _messages_ yet. I'll introduce them later.
+We haven't met _messages_ yet. I'll introduce them in a later episode.
 For now, "sending a message" is synonymous with invoking an actor's behavior.
 You can think of it as sending an empty message.
 We'll define a placeholder `send()` method:
@@ -214,7 +215,7 @@ I've defined `AlternatingSender`'s behavior procs inside the struct:
 ```
 (Without the `static` keyword they'd be member functions and couldn't
 be used as `BehaviorProcs`. I'd like them to be member functions.
-Those `static_cast` downcasts sure are ugly. I'll fix it next time.)
+Those `static_cast` downcasts sure are ugly. I'll fix them next time.)
 ```c++
 };
 ```
@@ -248,13 +249,13 @@ void example_3()
 > ```
 
 Make sure that you understand the output.
-(Recall that the `yes` and `no` behaviors are set up to alternate.
-We are alternately invoking two actors each with alternating behaviors.)
+Recall that the `yes` and `no` behaviors are set up to alternate.
+We are alternately invoking two actors each with alternating behaviors.
 
 
 By the way, if you're getting uneasy about the weird static functions, `static_casts`,
 non-idiomatic C++ and so on, it's okay, you're not alone. I'm uneasy too.
-I'll work on that next time. Promise.
+I'll work on that in the next episode. Promise.
 
 ## Axiom 3: Actors can create new actors ##
 
@@ -264,7 +265,7 @@ Something like the following should suffice to create new actors:
 > Actor *a = new Actor;
 >```
 
-However, if we're going to support creating new actors we also need to provide a way to delete them.
+Now, if we're going to support creating new actors we also need to provide a way to delete them.
 This raises a subtle point: our actors are polymorphic. Each subclass may need its own
 destructor (e.g. to clean up  local data, and to ensure that member objects have their
 destructors invoked). Typically this is what a virtual destructor is for, however I'm loath
@@ -346,7 +347,7 @@ void example_4()
 
 It proves the concept.
 
-That's it for today. Next time I'll C++-ify things a bit.
+In the next installment we'll C++-ify things.
 
 ```c++
 int main(int, char *[])
@@ -359,8 +360,8 @@ int main(int, char *[])
 ```
 
 ***
-Next: _Coming soon..._ <br/>
+Next: [C++ Actors](03-cpp-actors.cpp.md) <br/>
 Previous: [Boxed Function Pointers](01-boxed-function-pointers.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-05-31 07:07:14.192000
+Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-07-20 02:10:47.851000

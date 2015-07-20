@@ -1,19 +1,19 @@
 #include <cstdio>
-#include "emdeer.h" // (used for C++ to markdown conversion)
+#include "emdeer.h" // (C++ to markdown conversion utils)
 
 /// 1. Boxed Function Pointers
 /// ==========================
 
 /// Our story begins with a "boxed" function pointer: a function pointer
-/// inside in a struct.
+/// stored inside a `struct`. We declare the type of the function pointer using a
+/// `typedef`:
 
-struct Box; // forward declaration
-
-/// The function takes a pointer to its containing box as an argument.
+struct Box; // forward declaration needed by BoxProc
 
 typedef void (*BoxProc)(Box *a);
 
-/// Since it doesn't return a value, technically it's a procedure; hence `BoxProc`.
+/// The function takes a pointer to its containing box as an argument.
+/// It doesn't return a value, so technically it's a procedure; hence `BoxProc`.
 
 /// Here's the proc in its box:
 
@@ -21,7 +21,7 @@ struct Box {
     BoxProc bp;
 };
 
-/// So far, so good. Let's define a procedure and test it:
+/// So far, so good. Let's define a procedure and try it out:
 
 void hello(Box *)
 {
@@ -30,10 +30,11 @@ void hello(Box *)
 
 void example_1()
 {
-    MD_BEGIN_OUTPUT("Output 1");    // (You can ignore these MD_BEGIN_OUTPUT lines.
-                                    // They serve to delimit each example's output so
-                                    // that it can be automatically inserted in to the
-                                    // markdown rendering of this file.
+    MD_BEGIN_OUTPUT("Output 1");    // (MD_BEGIN_OUTPUT lines mark each
+                                    // example's output. This lets the emdeer
+                                    // markdown generator automatically insert
+                                    // program output into the markdown
+                                    // rendering of this file.)
     Box a = {hello};
     a.bp(&a);
 }
@@ -42,9 +43,7 @@ void example_1()
 /// [Output 1]
 
 
-/// Each instance of `Box` can reference a different procedure.
-
-/// Let's define a second procedure:
+/// Each instance of `Box` can reference a different procedure:
 
 void goodbye(Box *)
 {
@@ -66,8 +65,8 @@ void example_2()
 
 /// [Output 2]
 
-/// Typing the box name twice for each `bp` call is error-prone. Let's define
-/// a function to invoke the box's proc:
+/// Typing the box name twice for each `bp` call is tedious and error-prone.
+/// Let's define a function to invoke the box's proc:
 
 void invoke(Box& a)
 {
@@ -122,7 +121,8 @@ void example_4()
 
 /// [Output 4]
 
-/// That's it for the first episode. Next I'll begin to explore using boxed function pointers to implement _Actors_.
+/// That's it for the first installment. Next time we'll begin to explore
+/// using boxed function pointers to implement something called _Actors_.
 
 int main(int, char *[])
 {
