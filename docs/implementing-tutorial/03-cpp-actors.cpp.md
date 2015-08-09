@@ -215,6 +215,11 @@ Here's the test code; rewritten to use the above interface.
             : Actor(sender_0_thunk_) // see below
             , target0_(a)
             , target1_(b) {}
+
+    private:
+        // non-copyable
+        AlternatingSender(const AlternatingSender&);
+        AlternatingSender& operator=(const AlternatingSender&);
 ```
 
 Make our behaviors protected. They'll only be referenced by other behaviors.
@@ -336,6 +341,12 @@ constructor and the calls to `become()`:
             , target0_(a)
             , target1_(b) {}
 
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks1(const AlternatingSenderTemplateThunks1&);
+        AlternatingSenderTemplateThunks1& operator=(const AlternatingSenderTemplateThunks1&);
+
     protected:
         void sender_0()
         {
@@ -387,6 +398,11 @@ instantiation using an overloaded version of `become()`.
             : Actor(behavior_thunk<this_type, &this_type::sender_0>)
             , target0_(a)
             , target1_(b) {}
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks2(const AlternatingSenderTemplateThunks2&);
+        AlternatingSenderTemplateThunks2& operator=(const AlternatingSenderTemplateThunks2&);
 
     protected:
         template< typename T, void (T::*BehaviorMemberFn)() >
@@ -509,6 +525,11 @@ Now we can use `ActorT` as the base class. The code for
             : ActorT(behavior_thunk<&this_type::sender_0>)
             , target0_(a)
             , target1_(b) {}
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks(const AlternatingSenderTemplateThunks&);
+        AlternatingSenderTemplateThunks& operator=(const AlternatingSenderTemplateThunks&);
 
     protected:
         void sender_0()
@@ -636,4 +657,4 @@ Next: _Coming soon..._ <br/>
 Previous: [Raw Actors](02-raw-actors.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`03-cpp-actors.cpp`](03-cpp-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-07-20 06:46:25.661000
+Generated from [`03-cpp-actors.cpp`](03-cpp-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-09 05:51:38.554000

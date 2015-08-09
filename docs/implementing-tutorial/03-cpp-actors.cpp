@@ -184,6 +184,11 @@ void inject(Actor& a) { a.bp_(a); }
             , target0_(a)
             , target1_(b) {}
 
+    private:
+        // non-copyable
+        AlternatingSender(const AlternatingSender&);
+        AlternatingSender& operator=(const AlternatingSender&);
+
 /// Make our behaviors protected. They'll only be referenced by other behaviors.
 protected:
 
@@ -279,6 +284,12 @@ namespace cpp_actors_2 {
             , target0_(a)
             , target1_(b) {}
 
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks1(const AlternatingSenderTemplateThunks1&);
+        AlternatingSenderTemplateThunks1& operator=(const AlternatingSenderTemplateThunks1&);
+
     protected:
         void sender_0()
         {
@@ -321,6 +332,11 @@ namespace cpp_actors_2 {
             : Actor(behavior_thunk<this_type, &this_type::sender_0>)
             , target0_(a)
             , target1_(b) {}
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks2(const AlternatingSenderTemplateThunks2&);
+        AlternatingSenderTemplateThunks2& operator=(const AlternatingSenderTemplateThunks2&);
 
     protected:
         template< typename T, void (T::*BehaviorMemberFn)() >
@@ -422,6 +438,11 @@ namespace cpp_actors_3 {
             : ActorT(behavior_thunk<&this_type::sender_0>)
             , target0_(a)
             , target1_(b) {}
+
+    private:
+        // non-copyable
+        AlternatingSenderTemplateThunks(const AlternatingSenderTemplateThunks&);
+        AlternatingSenderTemplateThunks& operator=(const AlternatingSenderTemplateThunks&);
 
     protected:
         void sender_0()
