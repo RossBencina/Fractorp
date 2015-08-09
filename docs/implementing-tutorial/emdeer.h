@@ -17,4 +17,10 @@
 
 #define MD_BEGIN_OUTPUT(SECTION_NAME) std::printf("\n# [" SECTION_NAME "] #\n\n")
 
+/// `MD_BEGIN_HIDE` and `MD_END_HIDE` delimit sections that should not be
+/// output to the .md file.
+
+#define MD_BEGIN_HIDE
+#define MD_END_HIDE
+
 #endif /* INCLUDED_EMDEER_H */

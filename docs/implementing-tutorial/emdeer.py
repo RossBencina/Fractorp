@@ -158,17 +158,33 @@ def outputText(s):
     else:
         outputLine(s)
 
+def isBeginHide(s):
+    return s.strip() == "MD_BEGIN_HIDE"
+
+def isEndHide(s):
+    return s.strip() == "MD_END_HIDE"
+
+savedOutputting = ""
 isOutputting = "text"
 for s in src:
-    if isOutputting == "text":
-        if isText(s):
+    if isOutputting == "hidden":
+        if isEndHide(s):
+            isOutputting = savedOutputting
+    elif isOutputting == "text":
+        if isBeginHide(s):
+            savedOutputting = isOutputting
+            isOutputting = "hidden"
+        elif isText(s):
             outputText(stripTextPrefix(s))
         else:
             outputLine(codeBegin)
             outputLine(s)
             isOutputting = "code"
     else: # "code"
-        if isCode(s):
+        if isBeginHide(s):
+            savedOutputting = isOutputting
+            isOutputting = "hidden"
+        elif isCode(s):
             outputLine(s)
         else:
             outputLine(codeEnd)
