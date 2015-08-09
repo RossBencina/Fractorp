@@ -26,7 +26,7 @@ else:
     print "usage: emdeer.py sourceFileName"
     #exit(-1)
     # debugging:
-    sourceFileName = "01-boxed-function-pointer.cpp"
+    sourceFileName = "04-default-behavior.cpp"
 
 
 # ## queries and operation on lines of text ##
@@ -42,7 +42,7 @@ def isBlank(s):
 textPrefix = "/// "
 
 def isText(s):
-   return s.startswith(textPrefix)
+   return s.startswith(textPrefix) or (s.strip() == textPrefix.strip())
 
 def stripTextPrefix(x):
     return s[len(textPrefix):]
@@ -109,7 +109,6 @@ if blockKey:
 #       * comment-prefixed lines which exactly contain
 #         an output block key are replaced with the
 #         corresponding output block.
-#         
 
 sourceLines = open(sourceFileName, "rt").read().splitlines()
 
@@ -126,7 +125,7 @@ def extendText(i, previousLineWasText):
     else:
         return isText(s)
 
-prevLineWasText = True  
+prevLineWasText = True
 N = len(sourceLines)
 for i in range(0,N): # forward
     prevLineWasText = extendText(i, prevLineWasText)
