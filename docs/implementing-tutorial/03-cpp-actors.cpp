@@ -5,10 +5,9 @@
 /// =============
 
 /// [Part 2](02-raw-actors.cpp.md) introduced a rudimentary implementation
-/// of actors in a C-like style.
-/// In this installment we're going to use C++ features such as
-/// member functions and private data to make the code more usable.
-/// Here's what to expect:
+/// of actors in a C-like coding style.
+/// In this installment we're going to make it easier to define and use actors
+/// with the help of a few C++ features. Here's what to expect:
 
 /// 1. Review the code from part 2.
 /// 2. Consider requirements for a more usable C++ implementation.
@@ -19,8 +18,7 @@
 
 /// ## 1. Review of C-like Code From Part 2
 
-/// Here's the implementation from part 2,
-/// annotated with explanatory comments:
+/// Here's the implementation from part 2, annotated with explanatory comments:
 
 namespace part_02_raw_actors {
 
@@ -156,7 +154,7 @@ namespace cpp_actors_1 { // first cut at C++ actors
 /// from within Actors. (In a later installment we'll restrict them to only being
 /// callable from within behavior procedures.)
     protected:
-        // Specify behavior for `a`'s next activation.
+        // Specify behavior for `this`'s next activation.
         void become(BehaviorProc bp) { bp_ = bp; }
 
         // Send an (empty) message to actor `a`.
@@ -527,9 +525,8 @@ void test4()
 
 } // end namespace cpp_actors_3
 
-/// Stay tuned for the next exciting installment, where I'll add the capability
-/// to automatically use a default behavior, thus eliminating four lines of
-/// boilerplate from many actor definitions.
+/// In the next part I'll add support for defining a default behavior,
+/// thus eliminating four lines of boilerplate from many actor definitions.
 
 int main(int, char *[])
 {
@@ -542,6 +539,6 @@ int main(int, char *[])
 }
 
 /// ***
-/// Next: _Coming soon..._ <br/>
+/// Next: [Default Initial Behavior](04-default-behavior.cpp.md) <br/>
 /// Previous: [Raw Actors](02-raw-actors.cpp.md) <br/>
 /// Up: [README](README.md)
