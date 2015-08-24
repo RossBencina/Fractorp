@@ -364,4 +364,4 @@ Next: [C++ Actors](03-cpp-actors.cpp.md) <br/>
 Previous: [Boxed Function Pointers](01-boxed-function-pointers.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-07-20 02:10:47.851000
+Generated from [`02-raw-actors.cpp`](02-raw-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-24 13:22:45.958000

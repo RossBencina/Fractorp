@@ -13,18 +13,17 @@ The story so far:
 4. [Default Initial Behavior (Convenience Feature)](04-default-behavior.cpp.md) *__NEW!__*
 
 Each part is writen as a stand-alone runnable C++ program, then automatically
-converted to markdown. Read the formatted markdown by clicking the links
+converted to markdown. Read the formatted version by clicking the links
 above, or load the `.cpp` source files in your favourite editor.
 
-Suggestions and patches are most welcome. I would love to receive feedback
-including:
+Suggestions and patches are most welcome. I would love to receive any and all feedback, for example:
  - Constructive criticism of the presentation (this is, as much as anything else, a writing excercise).
  - Suggestions on how to clarify, simplify or improve the writing and/or the C++ code.
  - Copy editing, including grammar and typos.
 
-Please use Git Hub's pull requests and issue tracker. If you'd like to discuss
-any aspect of this tutorial, feel free to open an issue.
-You can also reach me on Twitter: @RossBencina.
+Please use GitHub's pull requests and issue tracker. If you'd like to discuss
+any aspect of this tutorial, please open an issue.
+You can also reach me on Twitter: @RossBencina, and by email: rossb@audiomulch.com.
 
 ---
 

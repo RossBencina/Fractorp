@@ -7,10 +7,11 @@
 4. Default Initial Behavior
 ===========================
 
-In this episode we let actors define a `receive()` behavior that is
+In this episode we let actors define a `receive()` method that is
 automatically installed as the initial behavior.
-It's a convenience feature intended to save keystrokes.
-We're aiming for actor definitions that look like the following:
+It's not a big deal, just a convenience feature to save keystrokes and
+hopefully make our code clearer.
+We're aiming to write actor definitions that look like this:
 
 ```c++
 struct BrieferActor : public ActorT<BrieferActor> {
@@ -21,7 +22,8 @@ struct BrieferActor : public ActorT<BrieferActor> {
 };
 ```
 
-For comparison, with the code from [part 3](03-cpp-actors.cpp.md), we'd have to write:
+For comparison, here's the same actor declared with the base code from
+[part 3](03-cpp-actors.cpp.md):
 
 ```c++
 // Part 3 version:
@@ -38,15 +40,16 @@ struct VerbosePart3Actor : public ActorT<VerbosePart3Actor> {
 };
 ```
 
-In both cases note that `receive()` is *not* a virtual method. Remember that
-our actors only use a single boxed function pointer for polymorphic dispatch.
+Notice that in both cases the `receive()` method is not virtual. Recall that
+our actors use a single [boxed function pointer](01-boxed-function-pointers.cpp.md)
+for polymorphic dispatch.
 
-First lets review what we've already achieved. (Otherwise this file won't compile!)
+First let's review what we've already achieved. (Otherwise this file won't compile!)
 
 ## Recap: Actor Base Code
 
-Here's the `Actor` base struct that we defined in [part 3](03-cpp-actors.cpp.md).
-There's nothing new here.
+Here's the `Actor` base struct. There's nothing new here. It's just as
+we defined it in [part 3](03-cpp-actors.cpp.md).
 
 ```c++
 namespace cpp_actors_1 {
@@ -84,12 +87,11 @@ namespace cpp_actors_1 {
 
 ## Recap: ActorT<> behavior<>() Thunks
 
-[Part 3](03-cpp-actors.cpp.md) defined a template base class
-`ActorT<>`. `ActorT<>` provides a version of `become<>()` which
-thunks member-function pointers to free-function pointers compatible with
-the `BehaviorProc` function pointer type.
-We'll extend `ActorT<>` with our default initial behavior mechanism.
-For reference, here's the old `ActorT<>`:
+[Part 3's](03-cpp-actors.cpp.md) template base class
+`ActorT<>` provides a version of `become<>()` that converts
+member-function pointers to `BehaviorProc`-compatible free function pointers.
+We'll extend `ActorT<>` with the default initial behavior mechanism.
+For reference, here's the earlier version:
 
 ```c++
 namespace cpp_actors_3 {
@@ -122,11 +124,11 @@ namespace cpp_actors_3 {
 
 ## Implementation
 
-Here's the spec for our new feature:
+Our new feature has a formal specification:
 > **Default Initial Behavior:** When an `ActorT<>` subclass is instantiated
-> using the `ActorT::ActorT()` default constructor: If the derived class implements
-> a **`receive()`** method, that method will be installed as the initial behavior;
-> else if the subclass does not implement `receive()`, `Actor::do_nothing`
+> using the `ActorT::ActorT()` default constructor: If the derived class declares
+> a `receive()` member function, that function will be installed as the initial behavior;
+> else when the derived class does not define `receive()`, `Actor::do_nothing`
 > will be installed as the initial behavior.
 
 ```c++
@@ -147,7 +149,7 @@ namespace default_behavior {
 
 Now for the good stuff: the `get_default_behavior()` function (defined
 below in two template specializations) implements the default behavior mechanism.
-If the derived class defines a `receive()` method, `get_default_behavior()`
+If the derived class declares a `receive()` method, `get_default_behavior()`
 returns a `behavior_thunk<>` to that method; if not, `get_default_behavior()`
 returns `Actor::do_nothing`.
 
@@ -170,18 +172,19 @@ returns `Actor::do_nothing`.
 ```
 
 The mechanism detects whether the derived class implements `receive()`
-by matching the type of the `receive()` function pointer against the
-specializations of `get_default_behavior()`.
-If the derived class defines `receive()`, the type of
+by matching the type of the `receive()` function pointer against one of the
+`get_default_behavior()` specializations.
+If the derived class declares `receive()`, the type of
 `&derived_actor_type::receive` is `(derived_actor_type::*)()`.
-On the other hand, if the derived class does not implement `receive()`
+If the derived class does not declare `receive()`
 the type will be `(actor_t_type::*)()`.
 
-(If you're curious why we're using type matching on template parameters
-rather than on normal function overloads, it's because we need
-`&derived_actor_type::receive` as a type parameter to pass to `behavior_thunk<>`.)
+(If you're wondering why we're using type matching on template parameters
+rather than on function parameters, it's because we need
+to pass `&derived_actor_type::receive` as a type parameter to `behavior_thunk<>`.)
 
-`ActorT`'s default constructor invokes `get_default_behavior()`:
+`ActorT`'s default constructor invokes `get_default_behavior()` to install
+the initial behavior:
 ```c++
     protected:
         // NB: &derived_actor_type::receive refers to actor_t_type::receive if
@@ -191,7 +194,7 @@ rather than on normal function overloads, it's because we need
         ActorT(BehaviorProc bp) : Actor(bp) {} // construct with specified behavior.
 ```
 
-The remainder of the class implements the `become<>()` thunk templates from part 3:
+The remainder of the `ActorT<>` class implements the `become<>()` thunk templates from part 3:
 
 ```c++
         template< void (derived_actor_type::*BehaviorMemberFn)() >
@@ -210,7 +213,8 @@ The remainder of the class implements the `become<>()` thunk templates from part
 
 ## Tests
 
-First, test that we haven't broken anything:
+First, test that we haven't broken anything by defining an actor that
+explicitly specifies its initial behavior:
 
 ```c++
     struct ActorTAlternatingSender : public ActorT<ActorTAlternatingSender> {
@@ -322,7 +326,7 @@ Now test the default initial behavior mechanism:
 
 It works.
 
-To finish for today, here's a re-write of the `SelfDestructor` from
+I'll leave you with a re-write of the `SelfDestructor` idea from
 [part 2](02-raw-actors.cpp.md):
 
 ```c++
@@ -353,7 +357,7 @@ To finish for today, here's a re-write of the `SelfDestructor` from
 
         Creator creator;
 
-        for (int i = 0; i < 6; ++i)
+        for (int i = 0; i < 3; ++i)
             inject(creator);
     }
 ```
@@ -366,19 +370,13 @@ To finish for today, here's a re-write of the `SelfDestructor` from
 > deleting.
 > creating.
 > deleting.
-> creating.
-> deleting.
-> creating.
-> deleting.
-> creating.
-> deleting.
 > ```
 
 ```c++
 } // end namespace default_behavior
 ```
 
-Next time we'll get on to _messages_;
+Next time I'll probably tackle _messages_. Or maybe recursive sends.
 
 ```c++
 int main(int, char *[])
@@ -395,4 +393,4 @@ Next: _Coming soon..._ <br/>
 Previous: [C++ Actors](03-cpp-actors.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`04-default-behavior.cpp`](04-default-behavior.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-17 10:55:24.344000
+Generated from [`04-default-behavior.cpp`](04-default-behavior.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-24 13:22:39.432000

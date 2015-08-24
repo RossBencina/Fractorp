@@ -28,6 +28,19 @@ else:
     # debugging:
     sourceFileName = "04-default-behavior.cpp"
 
+# ## load input ##
+
+outputFileName = sourceFileName + ".md"
+outputFile = open(outputFileName, "wt")
+
+# compile and run the source file.
+# possibly we should store this info in special comments at the top
+# of the source file.
+os.system("g++ "+sourceFileName);
+os.system("a.exe > a.output.txt");
+
+programOutputLines = open("a.output.txt", "rt").read().splitlines()
+
 
 # ## queries and operation on lines of text ##
 
@@ -63,17 +76,6 @@ def stripBlankLines(xs):
 
 
 # ## Split program output into outputBlocks dict. ##
-
-outputFileName = sourceFileName + ".md"
-outputFile = open(outputFileName, "wt")
-
-# compile and run the source file.
-# possibly we should store this info in special comments at the top
-# of the source file.
-os.system("g++ "+sourceFileName);
-os.system("a.exe > a.output.txt");
-
-programOutputLines = open("a.output.txt", "rt").read().splitlines()
 
 # break the program output into a series of blocks, each delimited by a
 # `# [SECTION_NAME] #` line (or EOL)

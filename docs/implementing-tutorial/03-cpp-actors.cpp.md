@@ -650,8 +650,8 @@ int main(int, char *[])
 ```
 
 ***
-Next: [Default Behavior](04-default-behavior.cpp.md) <br/>
+Next: [Default Initial Behavior](04-default-behavior.cpp.md) <br/>
 Previous: [Raw Actors](02-raw-actors.cpp.md) <br/>
 Up: [README](README.md)
 
-Generated from [`03-cpp-actors.cpp`](03-cpp-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-17 10:15:02.347000
+Generated from [`03-cpp-actors.cpp`](03-cpp-actors.cpp) by [`emdeer.py`](emdeer.py) at UTC 2015-08-24 13:22:30.519000
