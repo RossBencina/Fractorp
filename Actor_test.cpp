@@ -1,7 +1,7 @@
 /*
     Fractorp by Ross Bencina
 
-    "You cannot find peace by avoiding life."  -- Virgina Wolf
+    "You cannot find peace by avoiding life."  -- Virginia Woolf
 */
 
 #include "Actor.h"
